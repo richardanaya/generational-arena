@@ -114,8 +114,7 @@ class GenerationalArena {
   }
 }
 
-let a = new GenerationalArena();
-a.insert("h")
-let k = a.insert("b");
-let b = k.to_bigint();
-console.log(Index.fromBigInt(b));
+module.exports = {
+  Index,
+  GenerationalArena,
+}
