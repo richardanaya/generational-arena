@@ -3,6 +3,21 @@ This is an allocator inspired from:
 * https://github.com/fitzgen/generational-arena
 * https://www.youtube.com/watch?v=P9u8x13W7UE
 
+# Example
+
+```javascript
+let {GenerationalArena} = require("generational-arena");
+let a = new GenerationalArena();
+let f = a.insert("foo")
+let b = a.insert("bar")
+a.contains(b) // true
+a.get(b)      // returns "bar"
+a.remove(f);  // returns "foo"
+a.contains(f) // returns false
+a.get(f)      // returns undefined
+```
+
+# Why?
 This is a data structure that offers certain gaurantees and tradeoffs.
 * everytime an object is inserted into the arena, a completely unique index will be returned that will never be given again.
 * whenever an index returned from arena is removed, space is freed to be re-used
