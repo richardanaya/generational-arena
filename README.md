@@ -10,4 +10,4 @@ This is a data structure that offers certain gaurantees.
 * an index can be converted to and from a 64-bit integer represented as a big integer 
 * an arena can hold max 2^32-1 items ( as limited by a javascript array )
 * an arena can hold max 2^32-1 generations
-* a generation increases on item removal
+* a generation increases on successful item removal
