@@ -10,11 +10,23 @@ let {GenerationalArena} = require("generational-arena");
 let a = new GenerationalArena();
 let f = a.insert("foo")
 let b = a.insert("bar")
-a.contains(b) // true
+a.contains(b) // returns true
 a.get(b)      // returns "bar"
 a.remove(f);  // returns "foo"
 a.contains(f) // returns false
 a.get(f)      // returns undefined
+for(k of a.values()){
+  console.log(k)     
+}
+// bar
+for(k of a.indices()){
+  console.log(k)     
+}
+// Index{...}
+for(k of a.indices()){
+  console.log(k)     
+}
+// {index:INdex{...},value:"bar"}
 ```
 
 # Why?
