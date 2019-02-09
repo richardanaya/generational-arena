@@ -23,7 +23,7 @@ for(k of a.indices()){
   console.log(k)     
 }
 // Index{...}
-for(k of a.indices()){
+for(k of a){
   console.log(k)     
 }
 // {index:INdex{...},value:"bar"}
