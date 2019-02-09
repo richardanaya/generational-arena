@@ -3,6 +3,16 @@ class Index {
     this.index = index;
     this.generation = generation;
   }
+
+  to_bigint(){
+    return ((BigInt(this.index) & 0xFFFFFFFFn) << 32n) | (BigInt(this.index) & 0xFFFFFFFFn)
+  }
+}
+
+Index.fromBigInt = function(n){
+  let i = n >> 32n & 0xFFFFFFFFn;
+  let g = n << 32n >> 32n & 0xFFFFFFFFn;
+  return new Index(Number(i),Number(g));
 }
 
 class GenerationalArena {
@@ -14,6 +24,9 @@ class GenerationalArena {
   }
 
   insert(v){
+    if(v === undefined){
+      throw new Error("cannot insert undefined into arena");
+    }
     // lets use the first free entry if we have one
     if(this.free_list_head !== null){
       let i = this.free_list_head;
@@ -100,3 +113,9 @@ class GenerationalArena {
     return i;
   }
 }
+
+let a = new GenerationalArena();
+a.insert("h")
+let k = a.insert("b");
+let b = k.to_bigint();
+console.log(Index.fromBigInt(b));
