@@ -1,0 +1,22 @@
+{
+  "name": "generational-arena",
+  "version": "0.0.1",
+  "description": "A generational arena allocator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richardanaya/generational-arena.git"
+  },
+  "keywords": [
+    "allocator"
+  ],
+  "author": "Richard Anaya",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/richardanaya/generational-arena/issues"
+  },
+  "homepage": "https://github.com/richardanaya/generational-arena#readme"
+}
