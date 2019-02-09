@@ -1,76 +1,79 @@
 class Index {
-  constructor(index,generation){
+  constructor(index, generation) {
     this.index = index;
     this.generation = generation;
   }
 
-  to_bigint(){
-    return ((BigInt(this.index) & 0xFFFFFFFFn) << 32n) | (BigInt(this.index) & 0xFFFFFFFFn)
+  to_bigint() {
+    return (
+      ((BigInt(this.index) & 0xffffffffn) << 32n) |
+      (BigInt(this.index) & 0xffffffffn)
+    );
   }
 }
 
-Index.fromBigInt = function(n){
-  let i = n >> 32n & 0xFFFFFFFFn;
-  let g = n << 32n >> 32n & 0xFFFFFFFFn;
-  return new Index(Number(i),Number(g));
-}
+Index.fromBigInt = function(n) {
+  let i = (n >> 32n) & 0xffffffffn;
+  let g = ((n << 32n) >> 32n) & 0xffffffffn;
+  return new Index(Number(i), Number(g));
+};
 
 class GenerationalArena {
-  constructor(){
+  constructor() {
     this.items = [];
     this.generation = 0;
     this.free_list_head = null;
     this.length = 0;
   }
 
-  insert(v){
-    if(v === undefined){
+  insert(v) {
+    if (v === undefined) {
       throw new Error("cannot insert undefined into arena");
     }
     // lets use the first free entry if we have one
-    if(this.free_list_head !== null){
+    if (this.free_list_head !== null) {
       let i = this.free_list_head;
       this.free_list_head = this.items[i].next_free;
       this.items[i] = {
         generation: this.generation,
-        value: v,
-      }
+        value: v
+      };
       this.length += 1;
-      return new Index(i,this.generation);
+      return new Index(i, this.generation);
     }
 
     this.items.push({
       generation: this.generation,
-      value: v,
+      value: v
     });
-    let idx = new Index(this.items.length-1,this.generation);
+    let idx = new Index(this.items.length - 1, this.generation);
     this.length += 1;
     return idx;
   }
 
-  contains(idx){
+  contains(idx) {
     return this.get(idx) !== undefined;
   }
 
-  get(idx){
+  get(idx) {
     let e = this.items[i.index];
-    if(e && e.generation === i.generation){
-        return e.v;
+    if (e && e.generation === i.generation) {
+      return e.v;
     }
     return undefined;
   }
 
-  remove(idx){
-    if(idx.index >= this.items.length){
+  remove(idx) {
+    if (idx.index >= this.items.length) {
       return undefined;
     }
 
     let e = this.items[idx.index];
-    if(e.generation !== undefined && e.generation == idx.generation){
+    if (e.generation !== undefined && e.generation == idx.generation) {
       this.generation += 1;
-      this.items[idx.index] =  {
-          next_free: this.free_list_head,
-      }
+      this.items[idx.index] = {
+        next_free: this.free_list_head
+      };
       this.free_list_head = idx.index;
       this.length -= 1;
       return e.value;
@@ -79,42 +82,42 @@ class GenerationalArena {
   }
 
   *[Symbol.iterator]() {
-    for(var i = 0 ;i < this.items.length; i++){
+    for (var i = 0; i < this.items.length; i++) {
       let x = this.items[i];
-      if(x.generation !== undefined){
-          yield {index:new Index(i,x.generation),value:x.value};
+      if (x.generation !== undefined) {
+        yield { index: new Index(i, x.generation), value: x.value };
       }
     }
   }
 
-  indices(){
-    let i = {items:this.items};
-    i[Symbol.iterator] = function *iter(){
-      for(var i = 0 ;i < this.items.length; i++){
+  indices() {
+    let i = { items: this.items };
+    i[Symbol.iterator] = function* iter() {
+      for (var i = 0; i < this.items.length; i++) {
         let x = this.items[i];
-        if(x.generation !== undefined){
-            yield new Index(i,x.generation);
+        if (x.generation !== undefined) {
+          yield new Index(i, x.generation);
         }
       }
-    }
+    };
     return i;
   }
 
-  values(){
-    let i = {items:this.items};
-    i[Symbol.iterator] = function *iter(){
-      for(var i = 0 ;i < this.items.length; i++){
+  values() {
+    let i = { items: this.items };
+    i[Symbol.iterator] = function* iter() {
+      for (var i = 0; i < this.items.length; i++) {
         let x = this.items[i];
-        if(x.generation !== undefined){
-            yield x.value;
+        if (x.generation !== undefined) {
+          yield x.value;
         }
       }
-    }
+    };
     return i;
   }
 }
 
 module.exports = {
   Index,
-  GenerationalArena,
-}
+  GenerationalArena
+};
