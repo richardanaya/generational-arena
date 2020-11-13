@@ -4,18 +4,18 @@ class Index {
     this.generation = generation;
   }
 
-  to_bigint() {
+  toNum() {
     return (
-      ((BigInt(this.index) & 0xffffffffn) << 32n) |
-      (BigInt(this.index) & 0xffffffffn)
+      ((this.generation & 0xffffffff) << 32) |
+      (this.index & 0xffffffff)
     );
   }
 }
 
-Index.fromBigInt = function(n) {
-  let i = (n >> 32n) & 0xffffffffn;
-  let g = ((n << 32n) >> 32n) & 0xffffffffn;
-  return new Index(Number(i), Number(g));
+Index.fromNum = function(n) {
+  let i = ((n& 0xffffffff00000000) >> 32) & 0xffffffff;
+  let g = n & 0xffffffff;
+  return new Index(Number(g), Number(i));
 };
 
 class GenerationalArena {
@@ -27,9 +27,6 @@ class GenerationalArena {
   }
 
   insert(v) {
-    if (v === undefined) {
-      throw new Error("cannot insert undefined into arena");
-    }
     // lets use the first free entry if we have one
     if (this.free_list_head !== null) {
       let i = this.free_list_head;
@@ -55,10 +52,10 @@ class GenerationalArena {
     return this.get(idx) !== undefined;
   }
 
-  get(idx) {
+  get(i) {
     let e = this.items[i.index];
     if (e && e.generation === i.generation) {
-      return e.v;
+      return e.value;
     }
     return undefined;
   }
@@ -116,8 +113,3 @@ class GenerationalArena {
     return i;
   }
 }
-
-module.exports = {
-  Index,
-  GenerationalArena
-};
